@@ -1,0 +1,16 @@
+version: '3'
+services:
+  weaviate:
+    image: semitechnologies/weaviate:latest
+    environment:
+      - ENABLE_MODULES=text2vec-openai
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+
+  backend:
+    build: .
+    ports:
+      - "8001:8001"
+    environment:
+      WEAVIATE_HOST: "http://weaviate:8080"

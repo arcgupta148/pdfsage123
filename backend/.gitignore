@@ -1,0 +1,20 @@
+#dependencies
+venv/
+.env
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.log
+# IDE / Editor files
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Weaviate-related
+weaviate_data/
+
+# Docker
+docker-compose.override.yml
+.DS_Store
+*.swp

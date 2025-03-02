@@ -1,6 +1,7 @@
 import { useState,useRef ,useEffect} from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import './pydict.css'
+import ChatSection from "./chatSection";
 // Correct PDF worker path
 pdfjs.GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.min.js`;
 
@@ -35,11 +36,26 @@ const PdfUploader = () => {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
-  const onFileChange = (e) => {
+  const onFileChange = async (e) => {
     const uploadedFile = e.target.files[0];
     if (uploadedFile){
       setFile(URL.createObjectURL(uploadedFile));
       setPdfName(uploadedFile.name);
+
+      const formData = new FormData();
+      formData.append("file",uploadedFile);
+      try{
+        const response = await fetch ("http://localhost:8001/files/upload/",{
+        "method":"POST",
+        "mode":"cors",
+        "body":formData
+        });
+
+        const data= await response.json();
+        console.log("Upload is successfull");
+      }catch(error){
+        console.log("Error uploading file",error);
+      }
     }
     const files = Array.from(e.target.files);
     setUploadedFiles((prevFiles) => [...prevFiles, ...files]);
@@ -87,28 +103,32 @@ const PdfUploader = () => {
 
       {/* Center Panel - Full PDF View */}
       <div className="pdf-display">
-        {file && (
+        {file ? (
           <Document
             file={file}
             onLoadSuccess={({ numPages }) => setNumPages(numPages)}
             onLoadError={(error) => console.error("Error loading PDF:", error)}
           >
                     {Array.from({ length: numPages }, (_, index) => (
-            <Page key={`page_${index + 1}`} pageNumber={index + 1} width={width}/>
+            <Page key={`page_${index}`} pageNumber={index} width={width}/>
           ))}
 
           </Document>
+        ):(
+          <div style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh"
+          }}>
+            <h2>PDF to be displayed</h2>
+          </div>
         )}
       </div>
 
       {/* Right Panel - Chat */}
-      <div className="chat-section">
-        <h3 className="text-lg font-bold">Chat</h3>
-        <p className="chat-response">{chatResponse}</p>
-        <button onClick={handleChatRequest} className="submit-btn">
-          Get Insights
-        </button>
-      </div>
+      
+        <ChatSection documentId={pdfName}></ChatSection>
     </div>
   );
 };
