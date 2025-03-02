@@ -1,4 +1,4 @@
-PDFSage : AI-Powered Document Retrieval System
+#PDFSage : AI-Powered Document Retrieval System
 
 Document Ingestion & Embedding Generation
 
@@ -30,7 +30,7 @@ For backend :
 
 Naviagte to backend folder and run
 docker-compose up
-# Please provide the image name as per your choice.
+Please provide the image name as per your choice.
 For Frontend : 
 Run the following commands
 docker build -t "Image Name"
